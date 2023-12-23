@@ -40,7 +40,7 @@ Follow these steps to deploy the API Gateway, Lambda Function, and DynamoDB tabl
 6. Find the `ApiEndpoint` value in the "Outputs" tab. This is the endpoint for your API Gateway.
 
 ```markdown
-![CloudFormation Outputs](./images/cloudformation_outputs.png)
+![CloudFormation Outputs](./output.png)
 ```
 
 ## Usage
