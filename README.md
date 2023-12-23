@@ -18,7 +18,7 @@ Follow these steps to deploy the API Gateway, Lambda Function, and DynamoDB tabl
 1. Clone the repository to your local machine.
 
     ```bash
-    git clone https://github.com/your-username/your-repo.git
+    git clone https://github.com/trsteinmetz/AWS-CrudApiToDynamoDb.git
     ```
 
 2. Navigate to the project directory.
@@ -30,14 +30,18 @@ Follow these steps to deploy the API Gateway, Lambda Function, and DynamoDB tabl
 3. Deploy the CloudFormation stack using the AWS CLI.
 
     ```bash
-    aws cloudformation create-stack --stack-name YourStackName --template-body file://cloudformation-template.yml --capabilities CAPABILITY_IAM
+    aws cloudformation create-stack --stack-name YourStackName --template-body file://HttpApi-Lambda-DynamoDb.yml --capabilities CAPABILITY_IAM
     ```
 
 4. Wait for the stack to complete deployment. You can monitor the progress in the AWS CloudFormation console.
 
 5. Once the stack is deployed successfully, go to the AWS CloudFormation console, select your stack, and navigate to the "Outputs" tab.
 
-6. Find the `ApiGatewayEndpoint` value in the "Outputs" tab. This is the endpoint for your API Gateway.
+6. Find the `ApiEndpoint` value in the "Outputs" tab. This is the endpoint for your API Gateway.
+
+```markdown
+![CloudFormation Outputs](./images/cloudformation_outputs.png)
+```
 
 ## Usage
 
