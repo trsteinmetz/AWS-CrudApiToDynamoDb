@@ -1,0 +1,178 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  DdbTableName:
+    Type: String
+    Default: simple-crud-items
+    Description: The name of the DynamoDB table used to persist items and to perform CRUD operations.
+
+  StageName:
+    Type: String
+    Default: Development
+    Description: Name of the stage where the API will be deployed.
+
+
+Resources:
+  DynamoDBTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: !Ref DdbTableName
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: '5'
+        WriteCapacityUnits: '5'
+
+  IAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: SimpleCrudDynamoDBPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'dynamodb:PutItem'
+                  - 'dynamodb:GetItem'
+                  - 'dynamodb:UpdateItem'
+                  - 'dynamodb:Scan'
+                  - 'dynamodb:Query'
+                  - 'dynamodb:DeleteItem'
+                Resource: !GetAtt DynamoDBTable.Arn
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogStream'
+                  - 'logs:CreateLogGroup'
+                  - 'logs:PutLogEvents'
+                Resource: '*'
+  
+  LambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: DynamoDBCrud.lambda_handler
+      Role: !GetAtt IAMRole.Arn
+      FunctionName: SimpleCrudLambdaFunction
+      Runtime: python3.11
+      Timeout: 10
+      MemorySize: 256
+      Code:
+        S3Bucket: trs-code-bucket
+        S3Key: simple-crud-ddb/DynamoDBCrud.zip
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref DynamoDBTable
+
+  HttpApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Description: Performs CRUD operations on DynamoDB.
+      Name: ApiCrudDynamoDb
+      ProtocolType: HTTP
+
+  LambdaIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationMethod: ANY
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt LambdaFunction.Arn
+      PayloadFormatVersion: '2.0'
+  
+  CreateItemApiRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'POST /Items'
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref LambdaIntegration
+  
+  GetAllItemsApiRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /Items'
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref LambdaIntegration
+  
+  GetSingleItemApiRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /Items/{id}'
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref LambdaIntegration
+  
+  UpdateItemApiRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'PUT /Items'
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref LambdaIntegration
+  
+  DeleteItemApiRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'DELETE /Items/{id}'
+      Target: !Join
+        - /
+        - - integrations
+          - !Ref LambdaIntegration
+  
+  ApiInvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/${Stage}/*/*
+  
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Join
+        - '-'
+        - - !Ref HttpApi
+          - access-logs
+  
+  Stage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      StageName: !Ref StageName
+      Description: Simple CRUD stage
+      AutoDeploy: true
+      ApiId: !Ref HttpApi
+      AccessLogSettings:
+        DestinationArn: !GetAtt LogGroup.Arn
+        Format: $context.identity.sourceIp - - [$context.requestTime] "$context.httpMethod $context.routeKey $context.protocol" $context.status $context.responseLength $context.requestId $context.integrationErrorMessage
+  
+
+Outputs:
+  ApiEndpoint:
+    Description: "Endpoint URL for the Development stage of the Items resource"
+    Value:
+      Fn::Sub:
+        - "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/${ResourcePath}"
+        - ApiGateway: !Ref HttpApi
+          Stage: !Ref Stage
+          ResourcePath: "Items"
