@@ -9,7 +9,7 @@ This project provides a simple yet powerful setup for handling CRUD (Create, Rea
 Before you begin, ensure you have the following prerequisites:
 
 - [AWS CLI](https://aws.amazon.com/cli/) installed and configured with the necessary access permissions.
-- [AWS CloudFormation](https://aws.amazon.com/cloudformation/) familiarity.
+- [AWS CloudFormation](https://aws.amazon.com/cloudformation/) is nice to have, but not at all mandatory.
 
 ## Deployment Steps
 
@@ -37,7 +37,9 @@ Follow these steps to deploy the API Gateway, Lambda Function, and DynamoDB tabl
 
 5. Once the stack is deployed successfully, go to the AWS CloudFormation console, select your stack, and navigate to the "Outputs" tab.
 
-6. Find the `ApiEndpoint` value in the "Outputs" tab. This is the endpoint for your API Gateway.
+![Workload Endpoint]([/relative/path/to/img.jpg?raw=true](https://github.com/trsteinmetz/AWS-CrudApiToDynamoDb/blob/main/images/output.png) "Get the Endpoint to Your API")
+
+7. Find the `ApiEndpoint` value in the "Outputs" tab. This is the endpoint for your API Gateway.
 
 ```markdown
 ![CloudFormation Outputs](./output.png)
