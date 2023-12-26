@@ -1,4 +1,4 @@
-# API Gateway and Lambda Function for DynamoDB CRUD Operations
+# A Serverless Workload to Perform CRUD Operations on DynamoDB
 
 ## Project Overview
 
@@ -63,4 +63,4 @@ To avoid incurring unnecessary costs, it's important to clean up resources when 
 aws cloudformation delete-stack --stack-name YourStackName
 ```
 
-Feel free to replace the example image and adjust the content based on your specific project structure.
+I hope you liked this solution. Feel free to contact me if you need to clarify some aspects of this work.
