@@ -37,7 +37,7 @@ Follow these steps to deploy the API Gateway, Lambda Function, and DynamoDB tabl
 
 5. Once the stack is deployed successfully, go to the AWS CloudFormation console, select your stack, and navigate to the "Outputs" tab.
 
-![Workload Endpoint]([/relative/path/to/img.jpg?raw=true](https://github.com/trsteinmetz/AWS-CrudApiToDynamoDb/blob/main/images/output.png) "Get the Endpoint to Your API")
+![Alt text](https://github.com/trsteinmetz/AWS-CrudApiToDynamoDb/blob/main/images/output.png "Find the Endpoint to Your API")
 
 7. Find the `ApiEndpoint` value in the "Outputs" tab. This is the endpoint for your API Gateway.
 
