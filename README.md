@@ -52,7 +52,7 @@ Now that your stack is deployed and the API Gateway endpoint is available, you c
 Here's an example using `curl` for a GET request:
 
 ```bash
-curl -X GET <ApiGatewayEndpoint>/items
+curl -X GET <ApiGatewayEndpoint>/Items
 ```
 
 ## Cleanup
