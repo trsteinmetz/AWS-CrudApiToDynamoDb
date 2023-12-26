@@ -41,10 +41,6 @@ Follow these steps to deploy the API Gateway, Lambda Function, and DynamoDB tabl
 
 7. Find the `ApiEndpoint` value in the "Outputs" tab. This is the endpoint for your API Gateway.
 
-```markdown
-![CloudFormation Outputs](./output.png)
-```
-
 ## Usage
 
 Now that your stack is deployed and the API Gateway endpoint is available, you can start making CRUD requests to your DynamoDB table using the provided endpoint.
@@ -61,14 +57,6 @@ To avoid incurring unnecessary costs, it's important to clean up resources when 
 
 ```bash
 aws cloudformation delete-stack --stack-name YourStackName
-```
-
-## Screenshots
-
-Include screenshots or diagrams to visually guide users through the process. Place images in the `images` directory and reference them in the README:
-
-```markdown
-![CloudFormation Outputs](./images/cloudformation_outputs.png)
 ```
 
 Feel free to replace the example image and adjust the content based on your specific project structure.
