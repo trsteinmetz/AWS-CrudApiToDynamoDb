@@ -4,6 +4,10 @@
 
 This project provides a simple yet powerful setup for handling CRUD (Create, Read, Update, Delete) operations on DynamoDB using an API Gateway to trigger a Lambda Function. The entire infrastructure is defined and deployed using AWS CloudFormation. The Lambda Function is written in Python.
 
+![Solution Overview](https://github.com/trsteinmetz/AWS-CrudApiToDynamoDb/blob/main/images/architecture.png "Architecture Diagram")
+
+The solution works as follows. _Step 1:_ The user sends a CRUD (Create, Read, Update or Delete) request to the API Gateway. _Step 2:_ A Lambda Function is triggered to handle the request. _Step 3:_ The operation result (or it’s failure) is logged in Cloudwatch. _Step 4:_ One or more items are retrieved, updated or deleted, according to the requested operation in step 1.
+
 ## Prerequisites
 
 Before you begin, ensure you have the following prerequisites:
